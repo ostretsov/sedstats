@@ -23,7 +23,10 @@ SOURCES += main.cpp\
     views/statistictimes.cpp \
     views/trayicon.cpp \
     controllers/sysidlecontroller.cpp \
-    controllers/timecounter.cpp
+    controllers/timecounter.cpp \
+    systemtrayicon/asystemtrayicon.cpp \
+    systemtrayicon/auniformsystemtrayicon.cpp \
+    systemtrayicon/aunitysystemtrayicon.cpp
 
 HEADERS  += views/setupview.h \
     views/statistictimes.h \
@@ -31,15 +34,20 @@ HEADERS  += views/setupview.h \
     controllers/basecontroller.h \
     controllers/cameracontroller.h \
     controllers/sysidlecontroller.h \
-    controllers/timecounter.h
+    controllers/timecounter.h \
+    systemtrayicon/asystemtrayicon.h \
+    systemtrayicon/auniformsystemtrayicon.h \
+    systemtrayicon/aunitysystemtrayicon.h
 
 FORMS    += forms/setupview.ui \
     forms/statistictimes.ui
 
 unix{
+    LIBS += -L/usr/lib -lappindicator -lnotify
     LIBS += -lX11 -lXss
     PKGCONFIG += opencv
     CONFIG += link_pkgconfig
+    PKGCONFIG += gtk+-2.0
 }
 
 RESOURCES += \

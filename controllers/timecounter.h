@@ -2,9 +2,10 @@
 #define TIMECOUNTER_H
 
 #include <QObject>
+
 #include "views/trayicon.h"
 
-
+class QTimer;
 class TimeCounter : public QObject
 {
     Q_OBJECT

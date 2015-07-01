@@ -1,8 +1,9 @@
 #ifndef TRAYICON_H
 #define TRAYICON_H
 
-#include <QSystemTrayIcon>
+#include "systemtrayicon/asystemtrayicon.h"
 #include <QMap>
+#include <QPointer>
 
 
 enum Color {green, gray, red};
@@ -11,13 +12,17 @@ enum Action {active, quit, settings};
 class QMenu;
 class QAction;
 
-class TrayIcon : public QSystemTrayIcon
+class TrayIcon : public QObject
 {
     Q_OBJECT
 public:
     explicit TrayIcon(QObject *parent = 0);
     ~TrayIcon();
 
+    void setToolTip(QString tooltip);
+    void setIcon(QIcon icon);
+    void setContextMenu(QMenu *menu);
+    void show();
 signals:
     void menuTriggered(Action);
 
@@ -30,6 +35,7 @@ private:
     QMap<Action, QString> m_actions;
     QAction *act, *qt, *sett;
     QMenu *m_menu;
+    QPointer<ASystemTrayIcon> m_trayIcon;
 };
 
-#endif // TRAYICON_H
+#endif //TRAYICON_H

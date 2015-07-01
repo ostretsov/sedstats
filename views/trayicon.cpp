@@ -1,13 +1,15 @@
 #include <QSystemTrayIcon>
 #include <QMenu>
 #include <QAction>
+#include <QDebug>
 
 #include "trayicon.h"
 
 
-TrayIcon::TrayIcon(QObject *parent) : QSystemTrayIcon(parent),
+TrayIcon::TrayIcon(QObject *parent) : QObject(parent),
     m_icons()
 {
+    m_trayIcon = ASystemTrayIcon::create();
     m_menu = new QMenu(nullptr);
 
     m_actions.insert(active,tr("activate"));
@@ -36,8 +38,23 @@ TrayIcon::changeIcon(Color color){
 }
 
 void
+TrayIcon::setContextMenu(QMenu *menu){
+    m_trayIcon->setContextMenu(menu);
+}
+
+void TrayIcon::setIcon(QIcon icon){
+    qDebug() << "Set icon ";
+    m_trayIcon->setIcon(icon);
+}
+
+void
 TrayIcon::changeToolTip(QString tooltip){
-    setToolTip(tooltip);
+    m_trayIcon->setToolTip(tooltip);
+}
+
+void
+TrayIcon::setToolTip(QString tooltip){
+    m_trayIcon->setToolTip(tooltip);
 }
 
 
@@ -45,5 +62,10 @@ TrayIcon::changeToolTip(QString tooltip){
 TrayIcon::~TrayIcon()
 {
     delete m_menu;
+}
+
+void
+TrayIcon::show(){
+    m_trayIcon->show();
 }
 
