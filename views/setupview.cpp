@@ -1,18 +1,21 @@
 #include "setupview.h"
 #include "ui_setupview.h"
+#include "ocvroutines.h"
 
 #include <QTimer>
 #include <QImage>
 #include <QCloseEvent>
 #include <QDebug>
+#include <QtConcurrent/QtConcurrent>
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
-#include "opencv2/imgproc/imgproc.hpp"
+#include <opencv2/imgproc/imgproc.hpp>
 
 SetupView::SetupView(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::SetupView)
+    ui(new Ui::SetupView),
+    weAreOpened(true)
 {
     ui->setupUi(this);
     ui->lblCamStream->setEnabled(false);
@@ -21,11 +24,15 @@ SetupView::SetupView(QWidget *parent) :
     ui->sldrMaxSize->setEnabled(false);
     ui->lblTo->setEnabled(false);
     ui->lblPicture->setEnabled(false);
+
+    connect(this, SIGNAL(imageChanged(QPixmap)), this, SLOT(setVideoFrmPicture(QPixmap)), Qt::QueuedConnection);
 }
 
 SetupView::~SetupView()
 {
     delete ui;
+    if(cap.isOpened())
+        cap.release();
 }
 
 
@@ -59,12 +66,12 @@ SetupView::on_checkBox_stateChanged(int arg1)
         ui->lblPicture->setEnabled(true);
         if(initCamera()){
             ui->lblPicture->setText(tr("We have a camera."));
-            showCameraOutput();
+            emit setupViewOpened(true);
             emit changeCheckCamera(Qt::Checked);
+            QFuture<void> res = QtConcurrent::run(this, &SetupView::showCameraOutput);
         }else{
-            ui->lblPicture->setText(tr("We havn't camera"));
+            ui->lblPicture->setText(tr("We have no camera"));
         }
-
         break;
     default:
         break;
@@ -99,8 +106,9 @@ void SetupView::on_sldrMaxSize_sliderMoved(int position)
 
 bool
 SetupView::initCamera(){
-    cv::VideoCapture cap(0); // open the default camera
-    cap.open(0);
+    if(!cap.isOpened()){
+        cap.open(0);
+    }
     if (cap.isOpened())
     {
         cap.release();
@@ -112,33 +120,70 @@ SetupView::initCamera(){
 
 void
 SetupView::showCameraOutput(){
-    connect(&m_videoTimer, &QTimer::timeout, [this](){
-        if(!this->isVisible()) return;
-        cv::Mat image;
-        cv::VideoCapture cap(0); // open the default camera
-        if(!cap.isOpened()) {
+    if(!this->isVisible()) return;
+    cv::Mat image;
+    if(!cap.isOpened()) {
+        cap.open(0);
+        if(!cap.isOpened())
             return;
-        }
+    }
+    while(ui->checkBox->checkState() == Qt::Checked and weAreOpened){
+        if(!this->isVisible())
+            continue;
         cap >> image;
-        cap.release();
-        int cx = image.cols/2;
-        int cy = image.rows/2;
-        int w_min = image.cols*ui->sldrMinSize->value()/100;
-        int w_max = image.cols*ui->sldrMaxSize->value()/100;
-        qDebug() << "WMIN = " << w_min << " WMAX = " << w_max;
-        cv::rectangle(image,
+        QSize frSize = ui->frmVideoStream->frameSize();
+        cv::Size sz;
+        /* Соотношение сторон кадра 4:3
+         * на моей камере
+        */
+        if(frSize.width()/4 < frSize.height()/3){
+            sz.width = frSize.width() - frSize.width() % 4;
+            sz.height = 3 * sz.width / 4;
+        }
+        else if(frSize.width()/4 > frSize.height()/3){
+            sz.height = frSize.height() - frSize.height() % 3;
+            sz.width = 4 * frSize.height()/ 3;
+        }
+        else{
+            sz.width = frSize.width();
+            sz.height = frSize.height();
+        }
+        cv::Mat scaled;
+        cv::resize(image, scaled, sz, 0, 0);
+        std::vector<cv::Rect> faces = findFaces(&scaled,
+                                        ui->sldrMinSize->value(),
+                                        ui->sldrMaxSize->value());
+        for(const auto &f: faces){
+            cv::rectangle(scaled, f, cv::Scalar(0, 255, 0));
+        }
+        int cx = scaled.cols/2;
+        int cy = scaled.rows/2;
+        int w_min = scaled.cols*ui->sldrMinSize->value()/100;
+        int w_max = scaled.cols*ui->sldrMaxSize->value()/100;
+        cv::rectangle(scaled,
                       cv::Point(cx-w_min/2, cy-w_min/2),
                       cv::Point(cx+w_min/2, cy+w_min/2),
                       cv::Scalar(0, 255,255));
-        cv::rectangle(image,
+        cv::rectangle(scaled,
                       cv::Point(cx-w_max/2, cy-w_max/2),
                       cv::Point(cx+w_max/2, cy+w_max/2),
                       cv::Scalar(0, 0, 255));
-        cv::cvtColor(image,image,CV_BGR2RGB);
-        QImage img= QImage((const unsigned char*)(image.data),
-            image.cols,image.rows,QImage::Format_RGB888);
-        ui->lblPicture->setPixmap(QPixmap::fromImage(img));
-    });
-    m_videoTimer.start(3000); // 1 раз в 3 секундs показывать изображение во фрейме
+        cv::cvtColor(scaled,scaled,CV_BGR2RGB);
+        QImage img= QImage((const unsigned char*)(scaled.data),
+                           scaled.cols,scaled.rows,QImage::Format_RGB888);
+        emit imageChanged(QPixmap::fromImage(img));
+    }
+    cap.release();
 }
 
+void
+SetupView::setVideoFrmPicture(QPixmap pctr){
+    ui->lblPicture->setPixmap(pctr);
+}
+
+void
+SetupView::closeEvent(QCloseEvent *ev){
+    emit setupViewOpened(false);
+    weAreOpened = false;
+    ev->accept();
+}

@@ -16,7 +16,8 @@
 BaseController::BaseController() :
     QObject(nullptr),
     m_camBusy(false),
-    m_sysidleBusy(false)
+    m_sysidleBusy(false),
+    m_setupViewOpened(false)
 {
     /* views */
     m_statisticTimes = new StatisticTimes(nullptr);
@@ -37,7 +38,6 @@ BaseController::BaseController() :
 
 void
 BaseController::start(){
-    //m_statisticTimes->show();
     m_trayIcon->show();
     m_timeCounter->startTimers();
 }
@@ -96,6 +96,8 @@ BaseController::createConnections(){
     //отправить в камера-контроллер новые значения макс и мин размеров лица
     connect(m_setupView, SIGNAL(changeMinMaxFaceSize(uint,uint)),
             m_cameraController, SLOT(setMinMaxFaceSizes(uint,uint)));
+    connect(m_setupView, SIGNAL(setupViewOpened(bool)),
+            this, SLOT(setupViewOpened(bool)));
 
 
 }
@@ -113,14 +115,12 @@ BaseController::sysIdleAnswer(unsigned long duration){
     QString time_s = time.currentTime().toString();
     m_sysidleBusy = duration < 1000 ? true : false;
     emit busySignal(m_sysidleBusy or m_camBusy);
-    //qDebug() << time_s << duration;
 }
 
 void
 BaseController::cameraFaceAnswer(bool facePresent){
     QString time_s = QTime().currentTime().toString();
     m_camBusy = facePresent;
-    //qDebug() << time_s << cameraPresent << facePresent;
 }
 
 void
@@ -148,7 +148,6 @@ BaseController::startTimers(){
     m_cameraTimer->start(2000);
 }
 
-
 void
 BaseController::changeCurrentIcon(Color color){
     emit changeSysTrayIcon(color);
@@ -163,4 +162,17 @@ BaseController::setCurrentWorkingTime(int t){
     Color color = t < 0 ? Color::red : Color::green;
     emit changeCurrentTime(sign + time, color);
     emit setSystemIconToolTip(sign+time);
+}
+
+void
+BaseController::setupViewOpened(bool opened){
+
+    if (opened){
+        qDebug() << "\t\t\t Setup opened";
+        m_cameraTimer->stop();
+    }
+    else{
+        qDebug() << "\t\t\t Setup closed";
+        m_cameraTimer->start(2000);
+    }
 }

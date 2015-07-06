@@ -26,7 +26,8 @@ SOURCES += main.cpp\
     controllers/timecounter.cpp \
     systemtrayicon/asystemtrayicon.cpp \
     systemtrayicon/auniformsystemtrayicon.cpp \
-    systemtrayicon/aunitysystemtrayicon.cpp
+    systemtrayicon/aunitysystemtrayicon.cpp \
+    ocvroutines.cpp
 
 HEADERS  += views/setupview.h \
     views/statistictimes.h \
@@ -37,7 +38,8 @@ HEADERS  += views/setupview.h \
     controllers/timecounter.h \
     systemtrayicon/asystemtrayicon.h \
     systemtrayicon/auniformsystemtrayicon.h \
-    systemtrayicon/aunitysystemtrayicon.h
+    systemtrayicon/aunitysystemtrayicon.h \
+    ocvroutines.h
 
 FORMS    += forms/setupview.ui \
     forms/statistictimes.ui

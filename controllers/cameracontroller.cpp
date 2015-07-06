@@ -1,4 +1,5 @@
 #include "controllers/cameracontroller.h"
+#include "ocvroutines.h"
 
 #include <QDebug>
 #include <QCoreApplication>
@@ -52,35 +53,19 @@ bool
 CameraController::m_hasFaceOnPicture(cv::Mat *picture){
     if(m_checkCamera != Qt::Checked)
         return false;
-    std::vector<cv::Rect> objects;
-    cv::CascadeClassifier face_cascade;
-    QString cascade_path = QCoreApplication::applicationDirPath() + "/haarcascades/haarcascade_frontalface_alt.xml";
-    if (!face_cascade.load(cascade_path.toStdString())){
-        qDebug() << "No cascade!!!";
-        return false;
-    }
-    cv::Mat frame = picture->clone();
-    cv::cvtColor(frame, frame, CV_BGR2GRAY );
-    cv::equalizeHist(frame, frame);
-    cv::Size min(frame.cols*m_minFaceSize/100, frame.cols*m_minFaceSize/100);
-    cv::Size max(frame.cols*m_maxFaceSize/100, frame.cols*m_maxFaceSize/100);
-    face_cascade.detectMultiScale(frame,
-                     objects,
-                     1.1,
-                     2,
-                     0,
-                     min,
-                     max);
+    std::vector<cv::Rect> objects = findFaces(picture,
+                                              m_minFaceSize,
+                                              m_maxFaceSize
+                                              );
+
     for(auto const o: objects){
         qDebug() << "Face";
     }
-
     if (objects.size() > 0){
         return true;
     }else{
         return false;
     }
-
 }
 
 void

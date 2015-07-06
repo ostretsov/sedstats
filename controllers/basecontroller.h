@@ -38,6 +38,7 @@ public slots:
     void trayIconTriggered(Action action);
     void changeCurrentIcon(Color color); //запрос на смену иконки
     void setCurrentWorkingTime(int t);
+    void setupViewOpened(bool opened);
 
 private:
     //views
@@ -59,6 +60,7 @@ private:
     unsigned int m_activeTime; //sec
     bool m_online; //connected to internet server
     bool m_camBusy, m_sysidleBusy;
+    bool m_setupViewOpened;
     unsigned long int m_beginTimeStamp;
 };
 
