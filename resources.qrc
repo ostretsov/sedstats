@@ -9,4 +9,7 @@
         <file>haarcascades/haarcascade_frontalface_alt.xml</file>
         <file>haarcascades/haarcascade_frontalface_alt2.xml</file>
     </qresource>
+    <qresource prefix="/tr">
+        <file>translations/sedstats_ru.qm</file>
+    </qresource>
 </RCC>

@@ -44,6 +44,8 @@ HEADERS  += views/setupview.h \
 FORMS    += forms/setupview.ui \
     forms/statistictimes.ui
 
+TRANSLATIONS = translations/sedstats_ru.ts
+
 unix{
     LIBS += -L/usr/lib -lappindicator -lnotify
     LIBS += -lX11 -lXss
