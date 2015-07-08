@@ -29,6 +29,7 @@ signals:
 public slots:
     void changeIcon(Color color);
     void changeToolTip(QString tooltip);
+    void showMessage(const QString &title, const QString &msg);
 
 private:
     QMap<Color, QString> m_icons;

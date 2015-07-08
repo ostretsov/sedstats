@@ -13,6 +13,11 @@ class SysIdleController;
 class CameraController;
 class TimeCounter;
 
+const unsigned int SYSNOTETIMERINIT = 60; // 1 minute
+const unsigned int IDLETIMERINIT = 1000; // 1 sec
+const unsigned int CAMERATIMERINIT = 2000; // 2 sec
+const unsigned int IDLEDURATION = 1000; // 1 sec
+
 class BaseController final : public QObject
 {
     Q_OBJECT
@@ -30,6 +35,7 @@ signals:
     void busySignal(bool busy);
     void changeSysTrayIcon(Color color);
     void setSystemIconToolTip(QString toolTip);
+    void putSysNoteMsg(const QString &title, const QString &msg);
 
 public slots:
     void aboutQuit();
@@ -39,6 +45,7 @@ public slots:
     void changeCurrentIcon(Color color); //запрос на смену иконки
     void setCurrentWorkingTime(int t);
     void setupViewOpened(bool opened);
+    void sysNoteTimerHandle();
 
 private:
     //views
@@ -54,10 +61,13 @@ private:
     //Timers
     QTimer *m_sysIdleTimer;
     QTimer *m_cameraTimer;
+    QTimer *m_sysNoteTimer;
 
     //Values
-    unsigned int m_maxWorkingTime; //sec
-    unsigned int m_activeTime; //sec
+//    unsigned int m_maxWorkingTime; //sec
+//    unsigned int m_activeTime; //sec
+    unsigned int m_sysNoteTime; //sec
+    int m_exceededTime; //sec
     bool m_online; //connected to internet server
     bool m_camBusy, m_sysidleBusy;
     bool m_setupViewOpened;

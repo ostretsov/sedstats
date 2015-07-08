@@ -69,3 +69,8 @@ TrayIcon::show(){
     m_trayIcon->show();
 }
 
+void
+TrayIcon::showMessage(const QString &title, const QString &msg){
+    m_trayIcon->showMessage(title, msg);
+}
+

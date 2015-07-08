@@ -15,6 +15,8 @@
 
 BaseController::BaseController() :
     QObject(nullptr),
+    m_sysNoteTime(SYSNOTETIMERINIT), //1 min
+    m_exceededTime(0),
     m_camBusy(false),
     m_sysidleBusy(false),
     m_setupViewOpened(false)
@@ -29,6 +31,8 @@ BaseController::BaseController() :
     /* timers */
     m_sysIdleTimer = new QTimer(this);
     m_cameraTimer = new QTimer(this);
+    m_sysNoteTimer = new QTimer(this);
+    m_sysNoteTimer->setSingleShot(true);
 
     /* controllers */
     m_sysIdleController = new SysIdleController(this);
@@ -98,6 +102,12 @@ BaseController::createConnections(){
             m_cameraController, SLOT(setMinMaxFaceSizes(uint,uint)));
     connect(m_setupView, SIGNAL(setupViewOpened(bool)),
             this, SLOT(setupViewOpened(bool)));
+    //обработать сигнал таймера системных оповещений
+    connect(m_sysNoteTimer, SIGNAL(timeout()),
+            this, SLOT(sysNoteTimerHandle()));
+    //соединить для выдачи системных оповещений
+    connect(this, SIGNAL(putSysNoteMsg(QString,QString)),
+            m_trayIcon, SLOT(showMessage(QString,QString)));
 
 
 }
@@ -113,7 +123,7 @@ void
 BaseController::sysIdleAnswer(unsigned long duration){
     QTime time;
     QString time_s = time.currentTime().toString();
-    m_sysidleBusy = duration < 1000 ? true : false;
+    m_sysidleBusy = duration < IDLEDURATION ? true : false;
     emit busySignal(m_sysidleBusy or m_camBusy);
 }
 
@@ -143,18 +153,27 @@ BaseController::trayIconTriggered(Action action){
 void
 BaseController::startTimers(){
     //1000 проверять system idle каждую секунду
-    m_sysIdleTimer->start(1000);
+    m_sysIdleTimer->start(IDLETIMERINIT);
     //теребить камеру каждые 2 секунды
-    m_cameraTimer->start(2000);
+    m_cameraTimer->start(CAMERATIMERINIT);
 }
 
 void
 BaseController::changeCurrentIcon(Color color){
     emit changeSysTrayIcon(color);
+    if(color == Color::red){
+        sysNoteTimerHandle();
+    }
+    else{
+        if(m_sysNoteTimer->isActive()){
+            m_sysNoteTimer->stop();
+        }
+    }
 }
 
 void
 BaseController::setCurrentWorkingTime(int t){
+    m_exceededTime = t;
     QString sign = t < 0 ? "-" : "";
     QString time = QString("%1:%2")
             .arg(abs(t/60), 2, 10, QLatin1Char('0'))
@@ -168,11 +187,26 @@ void
 BaseController::setupViewOpened(bool opened){
 
     if (opened){
-        qDebug() << "\t\t\t Setup opened";
         m_cameraTimer->stop();
     }
     else{
-        qDebug() << "\t\t\t Setup closed";
-        m_cameraTimer->start(2000);
+        m_cameraTimer->start(CAMERATIMERINIT);
+    }
+}
+
+void
+BaseController::sysNoteTimerHandle(){
+    unsigned int _extratime = abs(m_exceededTime) / 60; //переведем в минуты
+    if(_extratime < 1 /* < 1 min */){
+        qDebug() << "exceededTime" << m_exceededTime;
+        m_sysNoteTimer->singleShot(m_sysNoteTime * 1000, this, SLOT(sysNoteTimerHandle()));
+        return;
+    }
+    else{
+        qDebug() << "extraTime = " << _extratime;
+        emit putSysNoteMsg(tr("Time exceeded!"),
+                           QString("Your time is greater than the maximum %1 minute").arg(_extratime));
+        m_sysNoteTime *= 2;
+        m_sysNoteTimer->singleShot(m_sysNoteTime * 1000, this, SLOT(sysNoteTimerHandle()));
     }
 }
