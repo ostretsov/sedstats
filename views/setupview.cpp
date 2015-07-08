@@ -137,12 +137,14 @@ SetupView::showCameraOutput(){
          * на моей камере
         */
         if(frSize.width()/4 < frSize.height()/3){
-            sz.width = frSize.width() - frSize.width() % 4;
-            sz.height = 3 * sz.width / 4;
+            sz.width = frSize.width()/4;
+            sz.height = sz.width * 3;
+            sz.width *= 4;
         }
         else if(frSize.width()/4 > frSize.height()/3){
-            sz.height = frSize.height() - frSize.height() % 3;
-            sz.width = 4 * frSize.height()/ 3;
+            sz.height = frSize.height() / 3;
+            sz.width = sz.height * 4;
+            sz.height *= 3;
         }
         else{
             sz.width = frSize.width();
