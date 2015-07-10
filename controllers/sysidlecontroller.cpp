@@ -16,7 +16,10 @@ SysIdleController::m_get_idle(){
     }
     XScreenSaverInfo *info = XScreenSaverAllocInfo();
     XScreenSaverQueryInfo(dpy, DefaultRootWindow(dpy), info);
-    return info->idle;
+    XCloseDisplay(dpy);
+    unsigned int res = info->idle;
+    free(info);
+    return res;
 }
 
 void
