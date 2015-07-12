@@ -40,6 +40,8 @@ private:
     QTimer m_videoTimer;
     bool weAreOpened;
     void closeEvent(QCloseEvent * ev);
+    void showEvent(QShowEvent*);
+    void hideEvent(QHideEvent*);
 };
 
 #endif // SETUPVIEW_H

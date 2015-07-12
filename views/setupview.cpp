@@ -68,7 +68,10 @@ SetupView::on_checkBox_stateChanged(int arg1)
             ui->lblPicture->setText(tr("We have a camera."));
             emit setupViewOpened(true);
             emit changeCheckCamera(Qt::Checked);
-            QFuture<void> res = QtConcurrent::run(this, &SetupView::showCameraOutput);
+            weAreOpened = true;
+            QFuture<void> res =
+                    QtConcurrent::run(this,
+                                      &SetupView::showCameraOutput);
         }else{
             ui->lblPicture->setText(tr("We have no camera"));
         }
@@ -122,15 +125,21 @@ void
 SetupView::showCameraOutput(){
     if(!this->isVisible()) return;
     cv::Mat image;
-    if(!cap.isOpened()) {
-        cap.open(0);
-        if(!cap.isOpened())
-            return;
-    }
+    cap.open(0);
+    if(!cap.isOpened())
+        return;
     while(ui->checkBox->checkState() == Qt::Checked and weAreOpened){
         if(!this->isVisible())
             continue;
-        cap >> image;
+        if(!cap.grab()){
+            qDebug()<< "Can't grab video";
+        }
+        else{
+            if(!cap.retrieve(image)){
+                qDebug() << "Can't retrieve image";
+            }
+        }
+        //cap >> image;
         QSize frSize = ui->frmVideoStream->frameSize();
         cv::Size sz;
         /* Соотношение сторон кадра 4:3
@@ -189,3 +198,24 @@ SetupView::closeEvent(QCloseEvent *ev){
     weAreOpened = false;
     ev->accept();
 }
+
+void
+SetupView::showEvent(QShowEvent*){
+    if(initCamera()){
+        ui->lblPicture->setText(tr("We have a camera."));
+        emit setupViewOpened(true);
+        emit changeCheckCamera(Qt::Checked);
+        weAreOpened = true;
+        QFuture<void> res =
+                QtConcurrent::run(this,
+                                  &SetupView::showCameraOutput);
+    }else{
+        ui->lblPicture->setText(tr("We have no camera"));
+    }
+}
+
+void
+SetupView::hideEvent(QHideEvent*){
+    weAreOpened = false;
+}
+

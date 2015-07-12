@@ -13,7 +13,7 @@ class SysIdleController;
 class CameraController;
 class TimeCounter;
 
-const unsigned int SYSNOTETIMERINIT = 60; // 1 minute
+const unsigned int SYSNOTETIMERINIT = 10; // 1 minute
 const unsigned int IDLETIMERINIT = 1000; // 1 sec
 const unsigned int CAMERATIMERINIT = 2000; // 2 sec
 const unsigned int IDLEDURATION = 1000; // 1 sec
