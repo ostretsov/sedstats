@@ -32,15 +32,22 @@ CameraController::m_cameraInit(){
 
 void
 CameraController::procCamInput(){
+    qDebug() << "\t Proc cam input";
+    if(m_checkCamera != Qt::Checked){
+        qDebug() << "\t No need to proc camera";
+        emit imageProcessed(false);
+        return;
+    }
     cv::VideoCapture cap(0);
     if (!cap.isOpened()){
+        qDebug() << "\t No capture opened";
         emit imageProcessed(false);
         return;
     }
     cv::Mat image;
     cap >> image;
     cap.release();
-
+    qDebug() << "\t Call Ocv function";
     emit imageProcessed(m_hasFaceOnPicture(&image));
 }
 
@@ -51,13 +58,8 @@ CameraController::setCheckCamera(Qt::CheckState ch){
 
 bool
 CameraController::m_hasFaceOnPicture(cv::Mat *picture){
-    if(m_checkCamera != Qt::Checked)
-        return false;
-    std::vector<cv::Rect> objects = findFaces(picture,
-                                              m_minFaceSize,
-                                              m_maxFaceSize
-                                              );
-
+    std::vector<cv::Rect>
+            objects = findFaces(picture, m_minFaceSize, m_maxFaceSize);
     for(auto const o: objects){
         qDebug() << "Face";
     }

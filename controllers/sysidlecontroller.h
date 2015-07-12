@@ -18,6 +18,7 @@ public slots:
 private:
     unsigned long m_get_idle();
 
+
 };
 
 #endif // SYSIDLECONTROLLER_H

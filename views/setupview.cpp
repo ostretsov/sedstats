@@ -14,8 +14,7 @@
 
 SetupView::SetupView(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::SetupView),
-    weAreOpened(true)
+    ui(new Ui::SetupView)
 {
     ui->setupUi(this);
     ui->lblCamStream->setEnabled(false);
@@ -68,9 +67,7 @@ SetupView::on_checkBox_stateChanged(int arg1)
             ui->lblPicture->setText(tr("We have a camera."));
             emit setupViewOpened(true);
             emit changeCheckCamera(Qt::Checked);
-            weAreOpened = true;
-            QFuture<void> res =
-                    QtConcurrent::run(this,
+            m_res = QtConcurrent::run(this,
                                       &SetupView::showCameraOutput);
         }else{
             ui->lblPicture->setText(tr("We have no camera"));
@@ -109,9 +106,7 @@ void SetupView::on_sldrMaxSize_sliderMoved(int position)
 
 bool
 SetupView::initCamera(){
-    if(!cap.isOpened()){
-        cap.open(0);
-    }
+    cap.open(0);
     if (cap.isOpened())
     {
         cap.release();
@@ -128,9 +123,9 @@ SetupView::showCameraOutput(){
     cap.open(0);
     if(!cap.isOpened())
         return;
-    while(ui->checkBox->checkState() == Qt::Checked and weAreOpened){
-        if(!this->isVisible())
-            continue;
+    while(ui->checkBox->checkState() == Qt::Checked
+          and !this->isMinimized()
+          and this->isVisible()) {
         if(!cap.grab()){
             qDebug()<< "Can't grab video";
         }
@@ -139,7 +134,6 @@ SetupView::showCameraOutput(){
                 qDebug() << "Can't retrieve image";
             }
         }
-        //cap >> image;
         QSize frSize = ui->frmVideoStream->frameSize();
         cv::Size sz;
         /* Соотношение сторон кадра 4:3
@@ -185,6 +179,7 @@ SetupView::showCameraOutput(){
         emit imageChanged(QPixmap::fromImage(img));
     }
     cap.release();
+    return;
 }
 
 void
@@ -195,27 +190,27 @@ SetupView::setVideoFrmPicture(QPixmap pctr){
 void
 SetupView::closeEvent(QCloseEvent *ev){
     emit setupViewOpened(false);
-    weAreOpened = false;
     ev->accept();
 }
 
 void
-SetupView::showEvent(QShowEvent*){
+SetupView::showEvent(QShowEvent* ev){
     if(initCamera()){
         ui->lblPicture->setText(tr("We have a camera."));
         emit setupViewOpened(true);
         emit changeCheckCamera(Qt::Checked);
-        weAreOpened = true;
         QFuture<void> res =
                 QtConcurrent::run(this,
                                   &SetupView::showCameraOutput);
     }else{
         ui->lblPicture->setText(tr("We have no camera"));
     }
+    ev->accept();
 }
 
 void
-SetupView::hideEvent(QHideEvent*){
-    weAreOpened = false;
+SetupView::hideEvent(QHideEvent* ev){
+    emit setupViewOpened(false);
+    ev->accept();
 }
 

@@ -6,6 +6,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <QTimer>
 #include <QPixmap>
+#include <QFuture>
 
 namespace Ui {
 class SetupView;
@@ -38,10 +39,10 @@ private:
     void showCameraOutput();
     cv::VideoCapture cap;
     QTimer m_videoTimer;
-    bool weAreOpened;
-    void closeEvent(QCloseEvent * ev);
-    void showEvent(QShowEvent*);
-    void hideEvent(QHideEvent*);
+    QFuture<void> m_res;
+    void closeEvent(QCloseEvent *ev);
+    void showEvent(QShowEvent *ev);
+    void hideEvent(QHideEvent *ev);
 };
 
 #endif // SETUPVIEW_H

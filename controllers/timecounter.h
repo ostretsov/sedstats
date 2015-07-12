@@ -11,8 +11,8 @@ class TimeCounter : public QObject
     Q_OBJECT
 enum UserState {busy, free};
 enum MachineState {red, green, gray};
-static const int MAX_WORKING_TIME = 20;
-static const int AWAY_TIME  = 10;
+static const int MAX_WORKING_TIME = 60;
+static const int AWAY_TIME  = 60;
 public:
     explicit TimeCounter(QObject *parent = 0);
 

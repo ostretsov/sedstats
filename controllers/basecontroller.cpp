@@ -196,11 +196,12 @@ BaseController::setupViewOpened(bool opened){
 
 void
 BaseController::sysNoteTimerHandle(){
+    qDebug() << "Exceeded time = " << m_exceededTime;
     unsigned int _extratime = abs(m_exceededTime) / SYSNOTETIMERINIT; //переведем в минуты
     if(_extratime < 1 /* < 1 min */){
         qDebug() << "exceededTime" << m_exceededTime;
         emit putSysNoteMsg(tr("Time exceeded!"),
-                           tr("You reach end of max working time!"));
+                           tr("You reach max working time!"));
         m_sysNoteTimer->singleShot(m_sysNoteTime * 1000, this, SLOT(sysNoteTimerHandle()));
         return;
     }
