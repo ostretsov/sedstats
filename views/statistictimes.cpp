@@ -8,6 +8,9 @@ StatisticTimes::StatisticTimes(QWidget *parent) :
     ui(new Ui::StatisticTimes)
 {
     ui->setupUi(this);
+    setWindowFlags(Qt::CustomizeWindowHint
+                   |Qt::WindowStaysOnTopHint
+                   |Qt::WindowMinimizeButtonHint);
 }
 
 void

@@ -14,14 +14,20 @@ TrayIcon::TrayIcon(QObject *parent) : QObject(parent),
 
     m_actions.insert(active,tr("activate"));
     m_actions.insert(quit, tr("quit"));
+    /*
     m_actions.insert(settings, tr("settings"));
+    */
 
     act = m_menu->addAction(m_actions.value(active));
+    /*
     sett = m_menu->addAction(m_actions.value(settings));
+    */
     qt = m_menu->addAction(m_actions.value(quit));
 
     connect(act, &QAction::triggered, [this] () {emit menuTriggered(active);});
+    /*
     connect(sett, &QAction::triggered, [this] () {emit menuTriggered(settings);});
+    */
     connect(qt, &QAction::triggered, [this] () {emit menuTriggered(quit);});
 
     setContextMenu(m_menu);
