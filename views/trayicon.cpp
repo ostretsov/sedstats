@@ -35,12 +35,13 @@ TrayIcon::TrayIcon(QObject *parent) : QObject(parent),
     m_icons.insert(gray, ":/images/images/gray.png");
     m_icons.insert(green,":/images/images/green.png");
     m_icons.insert(red, ":/images/images/red.png");
-    changeIcon(green);
+    m_trayIcon->show();
 }
 
 void
 TrayIcon::changeIcon(Color color){
-    setIcon(QIcon(m_icons.value(color)));
+    //setIcon(QIcon(m_icons.value(color)));
+    setIcon(m_icons.value(color));
 }
 
 void
@@ -50,6 +51,11 @@ TrayIcon::setContextMenu(QMenu *menu){
 
 void TrayIcon::setIcon(QIcon icon){
     qDebug() << "Set icon ";
+    m_trayIcon->setIcon(icon);
+}
+void
+TrayIcon::setIcon(QString icon){
+    qDebug() << "Set icon by fname";
     m_trayIcon->setIcon(icon);
 }
 

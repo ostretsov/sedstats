@@ -132,7 +132,7 @@ BaseController::cameraFaceAnswer(bool facePresent){
     QString time_s = QTime().currentTime().toString();
     m_camBusy = facePresent;
 }
-
+ 
 void
 BaseController::trayIconTriggered(Action action){
     switch (action) {
@@ -161,13 +161,21 @@ BaseController::startTimers(){
 void
 BaseController::changeCurrentIcon(Color color){
     emit changeSysTrayIcon(color);
-    if(color == Color::red){
-        sysNoteTimerHandle();
-    }
-    else{
+    switch (color) {
+    case Color::red:
+
+        break;
+    case Color::green:
+        emit putSysNoteMsg(tr("New working period"),
+                           tr("New period started"));
+        /*break;*/
+    case Color::gray:
         if(m_sysNoteTimer->isActive()){
             m_sysNoteTimer->stop();
         }
+        break;
+    default:
+        break;
     }
 }
 

@@ -21,6 +21,7 @@ public:
 
     void setToolTip(QString tooltip);
     void setIcon(QIcon icon);
+    void setIcon(QString icon);
     void setContextMenu(QMenu *menu);
     void show();
 signals:
