@@ -40,8 +40,8 @@ TrayIcon::TrayIcon(QObject *parent) : QObject(parent),
 
 void
 TrayIcon::changeIcon(Color color){
-    //setIcon(QIcon(m_icons.value(color)));
-    setIcon(m_icons.value(color));
+    setIcon(QIcon(m_icons.value(color)));
+    //setIcon(m_icons.value(color));
 }
 
 void

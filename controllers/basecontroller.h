@@ -4,6 +4,8 @@
 #include "views/trayicon.h"
 
 #include <QObject>
+#include <QMap>
+
 
 class SetupView;
 class StatisticTimes;
@@ -12,6 +14,8 @@ class TrayIcon;
 class SysIdleController;
 class CameraController;
 class TimeCounter;
+class QApplication;
+class QTranslator;
 
 const unsigned int SYSNOTETIMERINIT = 60; // sec
 const unsigned int IDLETIMERINIT = 1000; // milli sec
@@ -22,7 +26,7 @@ class BaseController final : public QObject
 {
     Q_OBJECT
 public:
-    explicit BaseController();
+    explicit BaseController(QApplication *parent = 0);
     ~BaseController();
     void start();
     void createConnections();
@@ -46,8 +50,14 @@ public slots:
     void setCurrentWorkingTime(int t);
     void setupViewOpened(bool opened);
     void sysNoteTimerHandle();
+    void changeLanguage(QString lang);
 
 private:
+    //our parent -- QApplication
+    QApplication *m_app;
+    //translations
+    QMap<QString, QString> *m_translations;
+    QMap<QString, QTranslator*> *m_translators;
     //views
     StatisticTimes* m_statisticTimes;
     SetupView* m_setupView;
@@ -64,14 +74,13 @@ private:
     QTimer *m_sysNoteTimer;
 
     //Values
-//    unsigned int m_maxWorkingTime; //sec
-//    unsigned int m_activeTime; //sec
     unsigned int m_sysNoteTime; //sec
     int m_exceededTime; //sec
     bool m_online; //connected to internet server
     bool m_camBusy, m_sysidleBusy;
     bool m_setupViewOpened;
     unsigned long int m_beginTimeStamp;
+    void initLanguagesMap();
 };
 
 #endif // BASECONTROLLER_H

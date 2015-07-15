@@ -10,17 +10,21 @@
 #include <QTimer>
 #include <QTime>
 #include <QSystemTrayIcon>
+#include <QMap>
+#include <QApplication>
 
 
 
-BaseController::BaseController() :
-    QObject(nullptr),
-    m_sysNoteTime(SYSNOTETIMERINIT), //1 min
+BaseController::BaseController(QApplication *parent) :
+    QObject(parent),
+    m_sysNoteTime(SYSNOTETIMERINIT),
     m_exceededTime(0),
     m_camBusy(false),
     m_sysidleBusy(false),
     m_setupViewOpened(false)
 {
+    /* our application */
+    m_app = parent;
     /* views */
     m_statisticTimes = new StatisticTimes(nullptr);
     m_setupView = new SetupView(nullptr);
@@ -38,6 +42,11 @@ BaseController::BaseController() :
     m_sysIdleController = new SysIdleController(this);
     m_cameraController = new CameraController(this);
     m_timeCounter = new TimeCounter(this);
+
+    /* I18n */
+    initLanguagesMap();
+    m_translations = new QMap<QString, QString>();
+    m_translators = new QMap<QString, QTranslator*>();
 }
 
 void
@@ -220,4 +229,14 @@ BaseController::sysNoteTimerHandle(){
         m_sysNoteTime *= 2;
         m_sysNoteTimer->singleShot(m_sysNoteTime * 1000, this, SLOT(sysNoteTimerHandle()));
     }
+}
+
+void
+BaseController::initLanguagesMap(){
+    m_translations->insert(QString("Русский"), QString("ru"));
+}
+
+void
+BaseController::changeLanguage(QString lang){
+
 }
