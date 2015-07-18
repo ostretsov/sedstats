@@ -31,6 +31,7 @@ signals:
 private:
     void closeEvent(QCloseEvent *ev);
     Ui::StatisticTimes *ui;
+    void changeEvent(QEvent *ev);
 };
 
 #endif // STATISTICTIMES_H

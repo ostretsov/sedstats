@@ -31,6 +31,7 @@ public:
     void start();
     void createConnections();
     void startTimers();
+    void initLanguagesMap();
 
 signals:
     void quit();
@@ -40,6 +41,7 @@ signals:
     void changeSysTrayIcon(Color color);
     void setSystemIconToolTip(QString toolTip);
     void putSysNoteMsg(const QString &title, const QString &msg);
+    void changeLanguage();
 
 public slots:
     void aboutQuit();
@@ -56,8 +58,8 @@ private:
     //our parent -- QApplication
     QApplication *m_app;
     //translations
-    QMap<QString, QString> *m_translations;
-    QMap<QString, QTranslator*> *m_translators;
+    QMap<QString, QString> m_translations;
+    QMap<QString, QTranslator*> m_translators;
     //views
     StatisticTimes* m_statisticTimes;
     SetupView* m_setupView;
@@ -80,7 +82,7 @@ private:
     bool m_camBusy, m_sysidleBusy;
     bool m_setupViewOpened;
     unsigned long int m_beginTimeStamp;
-    void initLanguagesMap();
+    QString m_currentLanguage;
 };
 
 #endif // BASECONTROLLER_H

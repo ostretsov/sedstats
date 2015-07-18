@@ -12,14 +12,11 @@ int main(int argc, char *argv[])
     app.setApplicationName("FaceTracker");
     app.setApplicationVersion("0.0.1");
 
-    QString locale = QLocale::system().name();
-    QTranslator translator;
-    translator.load(QString(":/tr/translations/sedstats_"+locale));
-    app.installTranslator(&translator);
 
     BaseController ctrl(&app);
     QObject::connect(&ctrl, &BaseController::quit, &app, &QApplication::quit);
     ctrl.createConnections();
+    ctrl.initLanguagesMap();
     ctrl.startTimers();
 
     ctrl.start();

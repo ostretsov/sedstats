@@ -31,6 +31,7 @@ public slots:
     void changeIcon(Color color);
     void changeToolTip(QString tooltip);
     void showMessage(const QString &title, const QString &msg);
+    void changeLanguage();
 
 private:
     QMap<Color, QString> m_icons;

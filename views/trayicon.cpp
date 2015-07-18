@@ -1,7 +1,8 @@
-#include <QSystemTrayIcon>
+ #include <QSystemTrayIcon>
 #include <QMenu>
 #include <QAction>
 #include <QDebug>
+#include <QEvent>
 
 #include "trayicon.h"
 
@@ -11,6 +12,7 @@ TrayIcon::TrayIcon(QObject *parent) : QObject(parent),
 {
     m_trayIcon = ASystemTrayIcon::create();
     m_menu = new QMenu(nullptr);
+    m_menu->setTitle("Sedstats");
 
     m_actions.insert(active,tr("activate"));
     m_actions.insert(quit, tr("quit"));
@@ -35,13 +37,13 @@ TrayIcon::TrayIcon(QObject *parent) : QObject(parent),
     m_icons.insert(gray, ":/images/images/gray.png");
     m_icons.insert(green,":/images/images/green.png");
     m_icons.insert(red, ":/images/images/red.png");
-    m_trayIcon->show();
+//    m_trayIcon->show();
 }
 
 void
 TrayIcon::changeIcon(Color color){
-    setIcon(QIcon(m_icons.value(color)));
-    //setIcon(m_icons.value(color));
+    //setIcon(QIcon(m_icons.value(color)));
+    setIcon(m_icons.value(color));
 }
 
 void
@@ -50,12 +52,10 @@ TrayIcon::setContextMenu(QMenu *menu){
 }
 
 void TrayIcon::setIcon(QIcon icon){
-    qDebug() << "Set icon ";
     m_trayIcon->setIcon(icon);
 }
 void
 TrayIcon::setIcon(QString icon){
-    qDebug() << "Set icon by fname";
     m_trayIcon->setIcon(icon);
 }
 
@@ -86,3 +86,10 @@ TrayIcon::showMessage(const QString &title, const QString &msg){
     m_trayIcon->showMessage(title, msg);
 }
 
+void
+TrayIcon::changeLanguage(){
+    qDebug() << "                 Change language in trayicon";
+    act->setText(tr("activate"));
+    qt->setText(tr("quit"));
+    setContextMenu(m_menu);
+}

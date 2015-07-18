@@ -24,6 +24,8 @@ signals:
     void changeCheckCamera(Qt::CheckState ch);
     void imageChanged(QPixmap pxmp);
     void setupViewOpened(bool opened);
+    void languageChanged(QString lang);
+
 private slots:
     void on_spnMaxWorkingPeriod_valueChanged(int arg1);
     void on_checkBox_stateChanged(int arg1);
@@ -33,6 +35,8 @@ private slots:
     void on_sldrMaxSize_sliderMoved(int position);
     void setVideoFrmPicture(QPixmap pctr);
 
+    void on_cmbLanguage_activated(const QString &arg1);
+
 private:
     Ui::SetupView *ui;
     bool initCamera();
@@ -40,9 +44,11 @@ private:
     cv::VideoCapture cap;
     QTimer m_videoTimer;
     QFuture<void> m_res;
+    QString m_currentLanguage;
     void closeEvent(QCloseEvent *ev);
     void showEvent(QShowEvent *ev);
     void hideEvent(QHideEvent *ev);
+    void changeEvent(QEvent *ev);
 };
 
 #endif // SETUPVIEW_H

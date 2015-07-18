@@ -12,11 +12,14 @@
 #include <QSystemTrayIcon>
 #include <QMap>
 #include <QApplication>
+#include <QTranslator>
 
 
 
 BaseController::BaseController(QApplication *parent) :
     QObject(parent),
+    m_translations(),
+    m_translators(),
     m_sysNoteTime(SYSNOTETIMERINIT),
     m_exceededTime(0),
     m_camBusy(false),
@@ -25,12 +28,12 @@ BaseController::BaseController(QApplication *parent) :
 {
     /* our application */
     m_app = parent;
+    /* system tray icon */
+    m_trayIcon = new TrayIcon(this);
     /* views */
     m_statisticTimes = new StatisticTimes(nullptr);
     m_setupView = new SetupView(nullptr);
 
-    /* system tray icon */
-    m_trayIcon = new TrayIcon(this);
 
     /* timers */
     m_sysIdleTimer = new QTimer(this);
@@ -42,11 +45,6 @@ BaseController::BaseController(QApplication *parent) :
     m_sysIdleController = new SysIdleController(this);
     m_cameraController = new CameraController(this);
     m_timeCounter = new TimeCounter(this);
-
-    /* I18n */
-    initLanguagesMap();
-    m_translations = new QMap<QString, QString>();
-    m_translators = new QMap<QString, QTranslator*>();
 }
 
 void
@@ -117,8 +115,12 @@ BaseController::createConnections(){
     //соединить для выдачи системных оповещений
     connect(this, SIGNAL(putSysNoteMsg(QString,QString)),
             m_trayIcon, SLOT(showMessage(QString,QString)));
-
-
+    //соединить для смены языка
+    connect(m_setupView, SIGNAL(languageChanged(QString)),
+            this, SLOT(changeLanguage(QString)));
+    //соединить для смены языка
+    connect(this, SIGNAL(changeLanguage()),
+            m_trayIcon, SLOT(changeLanguage()));
 }
 
 void
@@ -233,10 +235,34 @@ BaseController::sysNoteTimerHandle(){
 
 void
 BaseController::initLanguagesMap(){
-    m_translations->insert(QString("Русский"), QString("ru"));
+    QString locale = QLocale::system().name();
+//Здесь или нет вставится много переводов
+    m_translations.insert(QString("ru"), QString("Русский"));
+    m_translations.insert(QString("de"), QString("Deutsch"));
+//Создадим трансляторы для всех их
+    auto i = m_translations.constBegin();
+    while(i != m_translations.constEnd()){
+        QTranslator *tr = new QTranslator(this);
+        if(tr->load(QString(":/tr/translations/sedstats_"+i.key()))){
+            qDebug() << "Translator for "+ i.key()+ " loaded";
+        }else{
+            qDebug() << "Can't load translator";
+        }
+        m_translators.insert(i.value(), tr);
+        i++;
+    }
+    //установим, если есть, транслятор по локали
+    m_currentLanguage = m_translations.value(locale.mid(0,2));
+    qDebug() << "              Default lang settings " << m_currentLanguage;
+    m_app->installTranslator(m_translators.value(m_currentLanguage));
+    emit changeLanguage();
 }
 
 void
 BaseController::changeLanguage(QString lang){
-
+    qDebug() << "Change language to " << lang;
+    m_app->removeTranslator(m_translators.value(m_currentLanguage));
+    m_app->installTranslator(m_translators.value(lang));
+    m_currentLanguage = lang;
+    emit changeLanguage();
 }

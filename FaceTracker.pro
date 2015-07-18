@@ -44,7 +44,8 @@ HEADERS  += views/setupview.h \
 FORMS    += forms/setupview.ui \
     forms/statistictimes.ui
 
-TRANSLATIONS = translations/sedstats_ru.ts
+TRANSLATIONS = translations/sedstats_ru.ts \
+                translations/sedstats_de.ts
 
 unix{
     LIBS += -L/usr/lib -lappindicator -lnotify
@@ -53,6 +54,8 @@ unix{
     CONFIG += link_pkgconfig
     PKGCONFIG += gtk+-2.0
 }
+
+#DEFINES += QT_NO_DEBUG_OUTPUT
 
 RESOURCES += \
     resources.qrc

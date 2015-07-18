@@ -23,7 +23,6 @@ SetupView::SetupView(QWidget *parent) :
     ui->sldrMaxSize->setEnabled(false);
     ui->lblTo->setEnabled(false);
     ui->lblPicture->setEnabled(false);
-
     connect(this, SIGNAL(imageChanged(QPixmap)), this, SLOT(setVideoFrmPicture(QPixmap)), Qt::QueuedConnection);
 }
 
@@ -214,3 +213,20 @@ SetupView::hideEvent(QHideEvent* ev){
     ev->accept();
 }
 
+void
+SetupView::changeEvent(QEvent *ev){
+
+    if (ev->type() == QEvent::LanguageChange){
+        ui->retranslateUi(this);
+        int idx = ui->cmbLanguage->findText(m_currentLanguage);
+        ui->cmbLanguage->setCurrentIndex(idx);
+    }
+    QWidget::changeEvent(ev);
+}
+
+void SetupView::on_cmbLanguage_activated(const QString &arg1)
+{
+    m_currentLanguage = arg1;
+    emit languageChanged(arg1);
+
+}

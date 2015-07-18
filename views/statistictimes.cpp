@@ -37,3 +37,12 @@ StatisticTimes::closeEvent(QCloseEvent *ev){
     hide();
     ev->ignore();
 }
+
+void
+StatisticTimes::changeEvent(QEvent *ev){
+
+    if (ev->type() == QEvent::LanguageChange){
+        ui->retranslateUi(this);
+    }
+    QWidget::changeEvent(ev);
+}

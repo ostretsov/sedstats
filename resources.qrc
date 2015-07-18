@@ -11,5 +11,6 @@
     </qresource>
     <qresource prefix="/tr">
         <file>translations/sedstats_ru.qm</file>
+        <file>translations/sedstats_de.qm</file>
     </qresource>
 </RCC>

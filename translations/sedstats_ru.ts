@@ -1,6 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="ru_RU">
+<TS version="2.1" language="ru_RU">
+<context>
+    <name>BaseController</name>
+    <message>
+        <location filename="../controllers/basecontroller.cpp" line="180"/>
+        <source>New working period</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../controllers/basecontroller.cpp" line="181"/>
+        <source>New period started</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../controllers/basecontroller.cpp" line="222"/>
+        <location filename="../controllers/basecontroller.cpp" line="229"/>
+        <source>Time exceeded!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../controllers/basecontroller.cpp" line="223"/>
+        <source>You reach max working time!</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
 <context>
     <name>SetupView</name>
     <message>
@@ -39,38 +63,55 @@
         <translation type="unfinished">Выбор языка</translation>
     </message>
     <message>
-        <location filename="../forms/setupview.ui" line="119"/>
+        <location filename="../forms/setupview.ui" line="120"/>
+        <source>English</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/setupview.ui" line="125"/>
+        <source>Deutsch</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/setupview.ui" line="130"/>
+        <source>Русский</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/setupview.ui" line="138"/>
         <source>Use web-camera and face detection algorithm</source>
         <translation type="unfinished">Использовать веб-камеру и определение лица</translation>
     </message>
     <message>
-        <location filename="../forms/setupview.ui" line="132"/>
+        <location filename="../forms/setupview.ui" line="151"/>
         <source>Web-cam stream</source>
         <translation type="unfinished">Поток от веб-камеры</translation>
     </message>
     <message>
-        <location filename="../forms/setupview.ui" line="166"/>
-        <location filename="../views/setupview.cpp" line="56"/>
+        <location filename="../forms/setupview.ui" line="185"/>
+        <location filename="../views/setupview.cpp" line="54"/>
         <source>Video output</source>
         <translation type="unfinished">Видео</translation>
     </message>
     <message>
-        <location filename="../forms/setupview.ui" line="176"/>
+        <location filename="../forms/setupview.ui" line="195"/>
         <source>Face object size, %</source>
         <translation type="unfinished">Размер объекта, % от</translation>
     </message>
     <message>
-        <location filename="../forms/setupview.ui" line="204"/>
+        <location filename="../forms/setupview.ui" line="223"/>
         <source>to</source>
         <translation type="unfinished">до</translation>
     </message>
     <message>
-        <location filename="../views/setupview.cpp" line="68"/>
+        <location filename="../views/setupview.cpp" line="66"/>
+        <location filename="../views/setupview.cpp" line="198"/>
         <source>We have a camera.</source>
         <translation type="unfinished">У нас есть камера</translation>
     </message>
     <message>
-        <location filename="../views/setupview.cpp" line="73"/>
+        <location filename="../views/setupview.cpp" line="72"/>
+        <location filename="../views/setupview.cpp" line="205"/>
         <source>We have no camera</source>
         <translation type="unfinished">У нас нет камеры</translation>
     </message>
@@ -96,19 +137,18 @@
 <context>
     <name>TrayIcon</name>
     <message>
-        <location filename="../views/trayicon.cpp" line="15"/>
+        <location filename="../views/trayicon.cpp" line="17"/>
         <source>activate</source>
         <translation type="unfinished">показать</translation>
     </message>
     <message>
-        <location filename="../views/trayicon.cpp" line="16"/>
+        <location filename="../views/trayicon.cpp" line="18"/>
         <source>quit</source>
         <translation type="unfinished">выход</translation>
     </message>
     <message>
-        <location filename="../views/trayicon.cpp" line="17"/>
         <source>settings</source>
-        <translation type="unfinished">установки</translation>
+        <translation type="obsolete">установки</translation>
     </message>
 </context>
 </TS>
