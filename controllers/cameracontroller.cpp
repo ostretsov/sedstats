@@ -3,6 +3,9 @@
 
 #include <QDebug>
 #include <QCoreApplication>
+#include <QTime>
+#include <QFuture>
+#include <QtConcurrent/QtConcurrent>
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -18,6 +21,9 @@ CameraController::CameraController(QObject *parent) :
     m_checkCamera = Qt::Unchecked;
     m_minFaceSize = 20;
     m_maxFaceSize = 50; //в процента от ширины изображения
+    connect(this, &CameraController::m_tenSecondsFinished,
+            this, &CameraController::m_tenSecondsResult,
+            Qt::QueuedConnection);
 }
 
 bool
@@ -44,11 +50,33 @@ CameraController::procCamInput(){
         emit imageProcessed(false);
         return;
     }
+    //Здесь получать изображение до 10 сек
+    // или до обнаружения физиономии
+    QtConcurrent::run(this, &CameraController::m_tenSecondsFunc, cap);
+}
+
+bool
+CameraController::m_tenSecondsFunc(cv::VideoCapture cap){
+    qDebug() << "\t\t\t\t Start 10 sec cicle";
     cv::Mat image;
-    cap >> image;
-    cap.release();
-    qDebug() << "\t Call Ocv function";
-    emit imageProcessed(m_hasFaceOnPicture(&image));
+    QTime _t;
+    _t.start();
+    int i = 0;
+    bool _facePresent = false;
+    while(_t.elapsed() < 10000 /*10 sec in mills*/ and !_facePresent){
+        cap >> image;
+        _facePresent = m_hasFaceOnPicture(&image);
+        i++;
+    }
+    qDebug() << "\t\t\t\t"<< i << " frames processed. Time ellapsed " << _t.elapsed() << "msec";
+    qDebug() << "\t\t\t\t Face present = " << _facePresent;
+    emit m_tenSecondsFinished(_facePresent);
+    return _facePresent;
+}
+
+void
+CameraController::m_tenSecondsResult(bool hf){
+    emit imageProcessed(hf);
 }
 
 void
@@ -60,9 +88,6 @@ bool
 CameraController::m_hasFaceOnPicture(cv::Mat *picture){
     std::vector<cv::Rect>
             objects = findFaces(picture, m_minFaceSize, m_maxFaceSize);
-    for(auto const o: objects){
-        qDebug() << "Face";
-    }
     if (objects.size() > 0){
         return true;
     }else{

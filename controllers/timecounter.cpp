@@ -26,7 +26,6 @@ TimeCounter::setMaxWorkingTime(unsigned int t){
 void
 TimeCounter::userStateBusy(bool state){
     qDebug() << QTime().currentTime().toString() << "state = " << state;
-
     m_userState = state ? busy:free;
 }
 

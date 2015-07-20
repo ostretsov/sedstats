@@ -72,7 +72,7 @@ BaseController::createConnections(){
             m_cameraController, SLOT(procCamInput()));
     //получаем сигнал от контроллера камеры ответ по лицу :)
     connect(m_cameraController, SIGNAL(imageProcessed(bool)),
-            this, SLOT(cameraFaceAnswer(bool)));
+            this, SLOT(cameraFaceAnswer(bool)), Qt::QueuedConnection);
     //получаем сигнал от трей-икон меню
     connect(m_trayIcon, SIGNAL(menuTriggered(Action)),
             this, SLOT(trayIconTriggered(Action)));
@@ -135,12 +135,13 @@ BaseController::sysIdleAnswer(unsigned long duration){
     QTime time;
     QString time_s = time.currentTime().toString();
     m_sysidleBusy = duration < IDLEDURATION ? true : false;
+    qDebug() << "\t\t sysIdle = " << m_sysidleBusy << "\t Cam busy = " << m_camBusy;
     emit busySignal(m_sysidleBusy or m_camBusy);
+
 }
 
 void
 BaseController::cameraFaceAnswer(bool facePresent){
-    QString time_s = QTime().currentTime().toString();
     m_camBusy = facePresent;
 }
  

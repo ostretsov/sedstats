@@ -19,7 +19,7 @@ class QTranslator;
 
 const unsigned int SYSNOTETIMERINIT = 60; // sec
 const unsigned int IDLETIMERINIT = 1000; // milli sec
-const unsigned int CAMERATIMERINIT = 2000; // milli sec
+const unsigned int CAMERATIMERINIT = 20000; // 20 sec
 const unsigned int IDLEDURATION = 1000; // m sec
 
 class BaseController final : public QObject
