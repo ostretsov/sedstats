@@ -27,7 +27,8 @@ SOURCES += main.cpp\
     systemtrayicon/asystemtrayicon.cpp \
     systemtrayicon/auniformsystemtrayicon.cpp \
     systemtrayicon/aunitysystemtrayicon.cpp \
-    ocvroutines.cpp
+    ocvroutines.cpp \
+    controllers/sedstatssettings.cpp
 
 HEADERS  += views/setupview.h \
     views/statistictimes.h \
@@ -39,7 +40,8 @@ HEADERS  += views/setupview.h \
     systemtrayicon/asystemtrayicon.h \
     systemtrayicon/auniformsystemtrayicon.h \
     systemtrayicon/aunitysystemtrayicon.h \
-    ocvroutines.h
+    ocvroutines.h \
+    controllers/sedstatssettings.h
 
 FORMS    += forms/setupview.ui \
     forms/statistictimes.ui

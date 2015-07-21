@@ -45,6 +45,7 @@ BaseController::BaseController(QApplication *parent) :
     m_sysIdleController = new SysIdleController(this);
     m_cameraController = new CameraController(this);
     m_timeCounter = new TimeCounter(this);
+
 }
 
 void

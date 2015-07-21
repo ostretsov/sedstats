@@ -2,6 +2,7 @@
 #define BASECONTROLLER_H
 
 #include "views/trayicon.h"
+#include "controllers/sedstatssettings.h"
 
 #include <QObject>
 #include <QMap>
@@ -83,6 +84,7 @@ private:
     bool m_setupViewOpened;
     unsigned long int m_beginTimeStamp;
     QString m_currentLanguage;
+
 };
 
 #endif // BASECONTROLLER_H

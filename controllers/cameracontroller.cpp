@@ -63,7 +63,9 @@ CameraController::m_tenSecondsFunc(cv::VideoCapture cap){
     _t.start();
     int i = 0;
     bool _facePresent = false;
-    while(_t.elapsed() < 10000 /*10 sec in mills*/ and !_facePresent){
+    while(_t.elapsed() < 10000 /*10 sec in mills*/
+          and !_facePresent
+          and m_checkCamera == Qt::Checked){
         cap >> image;
         _facePresent = m_hasFaceOnPicture(&image);
         i++;
