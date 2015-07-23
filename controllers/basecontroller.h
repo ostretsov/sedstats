@@ -34,6 +34,8 @@ public:
     void startTimers();
     void initLanguagesMap();
 
+    void readSettings();
+    void writeSetings();
 signals:
     void quit();
     void sysIdleRequest();

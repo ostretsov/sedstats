@@ -2,6 +2,7 @@
 #include "controllers/sysidlecontroller.h"
 #include "controllers/cameracontroller.h"
 #include "controllers/timecounter.h"
+#include "controllers/sedstatssettings.h"
 #include "views/setupview.h"
 #include "views/statistictimes.h"
 #include "views/trayicon.h"
@@ -127,6 +128,7 @@ BaseController::createConnections(){
 void
 BaseController::aboutQuit(){
     qDebug() << "Quit from application";
+    writeSetings();
     emit quit();
 }
 
@@ -167,7 +169,7 @@ void
 BaseController::startTimers(){
     //1000 проверять system idle каждую секунду
     m_sysIdleTimer->start(IDLETIMERINIT);
-    //теребить камеру каждые 2 секунды
+    //теребить камеру
     m_cameraTimer->start(CAMERATIMERINIT);
 }
 
@@ -267,4 +269,14 @@ BaseController::changeLanguage(QString lang){
     m_app->installTranslator(m_translators.value(lang));
     m_currentLanguage = lang;
     emit changeLanguage();
+}
+
+void
+BaseController::readSettings(){
+    SedstatsSettings::Instance().readSettings();
+}
+
+void
+BaseController::writeSetings(){
+    SedstatsSettings::Instance().writeSettings();
 }

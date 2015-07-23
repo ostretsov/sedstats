@@ -1,6 +1,7 @@
 #include "setupview.h"
 #include "ui_setupview.h"
 #include "ocvroutines.h"
+#include "controllers/sedstatssettings.h"
 
 #include <QTimer>
 #include <QImage>
@@ -17,12 +18,22 @@ SetupView::SetupView(QWidget *parent) :
     ui(new Ui::SetupView)
 {
     ui->setupUi(this);
-    ui->lblCamStream->setEnabled(false);
-    ui->lblFaceObjSize->setEnabled(false);
-    ui->sldrMinSize->setEnabled(false);
-    ui->sldrMaxSize->setEnabled(false);
-    ui->lblTo->setEnabled(false);
-    ui->lblPicture->setEnabled(false);
+    /*set values according to settings */
+    ui->edtLogin->setText(SedstatsSettings::Instance().getLogin());
+    ui->edtPassword->setText(SedstatsSettings::Instance().getPasswd());
+    ui->checkBox->setChecked(SedstatsSettings::Instance().getCamUsing());
+    ui->spnMaxWorkingPeriod->setValue(SedstatsSettings::Instance().getMaxWorkingPeriod());
+    ui->sldrMinSize->setValue(SedstatsSettings::Instance().getMinWidth());
+    ui->sldrMaxSize->setValue(SedstatsSettings::Instance().getMaxWidth());
+    if(!ui->checkBox->isChecked()){
+        ui->lblCamStream->setEnabled(false);
+        ui->lblFaceObjSize->setEnabled(false);
+        ui->sldrMinSize->setEnabled(false);
+        ui->sldrMaxSize->setEnabled(false);
+        ui->lblTo->setEnabled(false);
+        ui->lblPicture->setEnabled(false);
+    }
+
     connect(this, SIGNAL(imageChanged(QPixmap)), this, SLOT(setVideoFrmPicture(QPixmap)), Qt::QueuedConnection);
 }
 
@@ -45,6 +56,7 @@ SetupView::on_checkBox_stateChanged(int arg1)
 {
     switch (arg1) {
     case Qt::Unchecked:
+        SedstatsSettings::Instance().setCamUsing(false);
         ui->lblCamStream->setEnabled(false);
         ui->lblFaceObjSize->setEnabled(false);
         ui->sldrMinSize->setEnabled(false);
@@ -56,6 +68,7 @@ SetupView::on_checkBox_stateChanged(int arg1)
         emit changeCheckCamera(Qt::Unchecked);
         break;
     case Qt::Checked:
+        SedstatsSettings::Instance().setCamUsing(true);
         ui->lblCamStream->setEnabled(true);
         ui->lblFaceObjSize->setEnabled(true);
         ui->sldrMinSize->setEnabled(true);
@@ -80,6 +93,7 @@ SetupView::on_checkBox_stateChanged(int arg1)
 void
 SetupView::on_sldrMinSize_valueChanged(int value)
 {
+    SedstatsSettings::Instance().setMinWidth(value);
     ui->sldrMinSize->setToolTip(QString("%1").arg(value));
     emit changeMinMaxFaceSize(ui->sldrMinSize->value(),
                               ui->sldrMaxSize->value());
@@ -92,6 +106,7 @@ SetupView::on_sldrMinSize_sliderMoved(int position)
 }
 void SetupView::on_sldrMaxSize_valueChanged(int value)
 {
+    SedstatsSettings::Instance().setMaxWidth(value);
     ui->sldrMaxSize->setToolTip(QString("%1").arg(value));
     emit changeMinMaxFaceSize(ui->sldrMinSize->value(),
                               ui->sldrMaxSize->value());
@@ -194,6 +209,7 @@ SetupView::closeEvent(QCloseEvent *ev){
 
 void
 SetupView::showEvent(QShowEvent* ev){
+
     if(initCamera()){
         ui->lblPicture->setText(tr("We have a camera."));
         emit setupViewOpened(true);

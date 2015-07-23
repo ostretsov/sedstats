@@ -1,4 +1,5 @@
 #include "controllers/cameracontroller.h"
+#include "controllers/sedstatssettings.h"
 #include "ocvroutines.h"
 
 #include <QDebug>
@@ -18,9 +19,13 @@
 CameraController::CameraController(QObject *parent) :
     QObject(parent)
 {
-    m_checkCamera = Qt::Unchecked;
-    m_minFaceSize = 20;
-    m_maxFaceSize = 50; //в процента от ширины изображения
+    if(SedstatsSettings::Instance().getCamUsing()){
+        m_checkCamera = Qt::Checked;
+    }else{
+        m_checkCamera = Qt::Unchecked;
+    }
+    m_minFaceSize = SedstatsSettings::Instance().getMinWidth();
+    m_maxFaceSize = SedstatsSettings::Instance().getMaxWidth();
     connect(this, &CameraController::m_tenSecondsFinished,
             this, &CameraController::m_tenSecondsResult,
             Qt::QueuedConnection);
