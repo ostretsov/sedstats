@@ -18,21 +18,7 @@ SetupView::SetupView(QWidget *parent) :
     ui(new Ui::SetupView)
 {
     ui->setupUi(this);
-    /*set values according to settings */
-    ui->edtLogin->setText(SedstatsSettings::Instance().getLogin());
-    ui->edtPassword->setText(SedstatsSettings::Instance().getPasswd());
-    ui->checkBox->setChecked(SedstatsSettings::Instance().getCamUsing());
-    ui->spnMaxWorkingPeriod->setValue(SedstatsSettings::Instance().getMaxWorkingPeriod());
-    ui->sldrMinSize->setValue(SedstatsSettings::Instance().getMinWidth());
-    ui->sldrMaxSize->setValue(SedstatsSettings::Instance().getMaxWidth());
-    if(!ui->checkBox->isChecked()){
-        ui->lblCamStream->setEnabled(false);
-        ui->lblFaceObjSize->setEnabled(false);
-        ui->sldrMinSize->setEnabled(false);
-        ui->sldrMaxSize->setEnabled(false);
-        ui->lblTo->setEnabled(false);
-        ui->lblPicture->setEnabled(false);
-    }
+
 
     connect(this, SIGNAL(imageChanged(QPixmap)), this, SLOT(setVideoFrmPicture(QPixmap)), Qt::QueuedConnection);
 }
@@ -48,6 +34,7 @@ SetupView::~SetupView()
 void
 SetupView::on_spnMaxWorkingPeriod_valueChanged(int arg1)
 {
+    SedstatsSettings::Instance().maxWorkingPeriod = arg1;
     emit changeMaxWorkingTime(arg1 * 60); // т.к. мы работаем с секундами
 }
 
@@ -56,7 +43,7 @@ SetupView::on_checkBox_stateChanged(int arg1)
 {
     switch (arg1) {
     case Qt::Unchecked:
-        SedstatsSettings::Instance().setCamUsing(false);
+        SedstatsSettings::Instance().camUsing = false;
         ui->lblCamStream->setEnabled(false);
         ui->lblFaceObjSize->setEnabled(false);
         ui->sldrMinSize->setEnabled(false);
@@ -68,7 +55,7 @@ SetupView::on_checkBox_stateChanged(int arg1)
         emit changeCheckCamera(Qt::Unchecked);
         break;
     case Qt::Checked:
-        SedstatsSettings::Instance().setCamUsing(true);
+        SedstatsSettings::Instance().camUsing = true;
         ui->lblCamStream->setEnabled(true);
         ui->lblFaceObjSize->setEnabled(true);
         ui->sldrMinSize->setEnabled(true);
@@ -93,7 +80,7 @@ SetupView::on_checkBox_stateChanged(int arg1)
 void
 SetupView::on_sldrMinSize_valueChanged(int value)
 {
-    SedstatsSettings::Instance().setMinWidth(value);
+    SedstatsSettings::Instance().minWidth = value;
     ui->sldrMinSize->setToolTip(QString("%1").arg(value));
     emit changeMinMaxFaceSize(ui->sldrMinSize->value(),
                               ui->sldrMaxSize->value());
@@ -106,7 +93,7 @@ SetupView::on_sldrMinSize_sliderMoved(int position)
 }
 void SetupView::on_sldrMaxSize_valueChanged(int value)
 {
-    SedstatsSettings::Instance().setMaxWidth(value);
+    SedstatsSettings::Instance().maxWidth = value;
     ui->sldrMaxSize->setToolTip(QString("%1").arg(value));
     emit changeMinMaxFaceSize(ui->sldrMinSize->value(),
                               ui->sldrMaxSize->value());
@@ -209,6 +196,23 @@ SetupView::closeEvent(QCloseEvent *ev){
 
 void
 SetupView::showEvent(QShowEvent* ev){
+    /*set values according to settings */
+    ui->edtLogin->setText(SedstatsSettings::Instance().login);
+    ui->edtPassword->setText(SedstatsSettings::Instance().passwd);
+    ui->checkBox->setChecked(SedstatsSettings::Instance().camUsing);
+    ui->spnMaxWorkingPeriod->setValue(SedstatsSettings::Instance().maxWorkingPeriod);
+    ui->sldrMinSize->setValue(SedstatsSettings::Instance().minWidth);
+    ui->sldrMaxSize->setValue(SedstatsSettings::Instance().maxWidth);
+    ui->cmbLanguage->setCurrentIndex(
+                ui->cmbLanguage->findText(SedstatsSettings::Instance().lang));
+    if(!ui->checkBox->isChecked()){
+        ui->lblCamStream->setEnabled(false);
+        ui->lblFaceObjSize->setEnabled(false);
+        ui->sldrMinSize->setEnabled(false);
+        ui->sldrMaxSize->setEnabled(false);
+        ui->lblTo->setEnabled(false);
+        ui->lblPicture->setEnabled(false);
+    }
 
     if(initCamera()){
         ui->lblPicture->setText(tr("We have a camera."));
@@ -242,6 +246,7 @@ SetupView::changeEvent(QEvent *ev){
 
 void SetupView::on_cmbLanguage_activated(const QString &arg1)
 {
+    SedstatsSettings::Instance().lang = arg1;
     m_currentLanguage = arg1;
     emit languageChanged(arg1);
 

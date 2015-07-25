@@ -128,7 +128,7 @@ BaseController::createConnections(){
 void
 BaseController::aboutQuit(){
     qDebug() << "Quit from application";
-    writeSetings();
+    this->writeSetings();
     emit quit();
 }
 
@@ -255,8 +255,14 @@ BaseController::initLanguagesMap(){
         m_translators.insert(i.value(), tr);
         i++;
     }
+    //найдем язык в установках
+    QString l = SedstatsSettings::Instance().lang;
+    if(l != ""){
+        m_currentLanguage = l;
+    }else{
     //установим, если есть, транслятор по локали
     m_currentLanguage = m_translations.value(locale.mid(0,2));
+    }
     qDebug() << "              Default lang settings " << m_currentLanguage;
     m_app->installTranslator(m_translators.value(m_currentLanguage));
     emit changeLanguage();
