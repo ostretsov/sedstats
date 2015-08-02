@@ -3,6 +3,7 @@
 #include "controllers/cameracontroller.h"
 #include "controllers/timecounter.h"
 #include "controllers/sedstatssettings.h"
+#include "controllers/dbcontroller.h"
 #include "views/setupview.h"
 #include "views/statistictimes.h"
 #include "views/trayicon.h"
@@ -46,11 +47,15 @@ BaseController::BaseController(QApplication *parent) :
     m_sysIdleController = new SysIdleController(this);
     m_cameraController = new CameraController(this);
     m_timeCounter = new TimeCounter(this);
+    m_dbController = new DBController(this);
 
 }
 
 void
 BaseController::start(){
+    if(!m_dbController->checkDB()){
+        m_dbController->createDB();
+    }
     m_trayIcon->show();
     m_timeCounter->startTimers();
 }

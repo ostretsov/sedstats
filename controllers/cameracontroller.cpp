@@ -19,13 +19,13 @@
 CameraController::CameraController(QObject *parent) :
     QObject(parent)
 {
-    if(SedstatsSettings::Instance().getCamUsing()){
+    if(SedstatsSettings::Instance().camUsing){
         m_checkCamera = Qt::Checked;
     }else{
         m_checkCamera = Qt::Unchecked;
     }
-    m_minFaceSize = SedstatsSettings::Instance().getMinWidth();
-    m_maxFaceSize = SedstatsSettings::Instance().getMaxWidth();
+    m_minFaceSize = SedstatsSettings::Instance().minWidth;
+    m_maxFaceSize = SedstatsSettings::Instance().maxWidth;
     connect(this, &CameraController::m_tenSecondsFinished,
             this, &CameraController::m_tenSecondsResult,
             Qt::QueuedConnection);

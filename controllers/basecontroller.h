@@ -9,6 +9,7 @@
 
 
 class SetupView;
+class DBController;
 class StatisticTimes;
 class QTimer;
 class TrayIcon;
@@ -72,6 +73,8 @@ private:
     SysIdleController *m_sysIdleController;
     CameraController *m_cameraController;
     TimeCounter *m_timeCounter;
+    DBController *m_dbController;
+
 
     //Timers
     QTimer *m_sysIdleTimer;

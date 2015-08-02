@@ -8,7 +8,7 @@
 CONFIG += c++11
 
 
-QT       += core gui
+QT       += core gui sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -28,7 +28,8 @@ SOURCES += main.cpp\
     systemtrayicon/auniformsystemtrayicon.cpp \
     systemtrayicon/aunitysystemtrayicon.cpp \
     ocvroutines.cpp \
-    controllers/sedstatssettings.cpp
+    controllers/sedstatssettings.cpp \
+    controllers/dbcontroller.cpp
 
 HEADERS  += views/setupview.h \
     views/statistictimes.h \
@@ -41,7 +42,8 @@ HEADERS  += views/setupview.h \
     systemtrayicon/auniformsystemtrayicon.h \
     systemtrayicon/aunitysystemtrayicon.h \
     ocvroutines.h \
-    controllers/sedstatssettings.h
+    controllers/sedstatssettings.h \
+    controllers/dbcontroller.h
 
 FORMS    += forms/setupview.ui \
     forms/statistictimes.ui

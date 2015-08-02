@@ -17,12 +17,12 @@ public:
     static unsigned int maxWidth, maxWorkingPeriod;
     static unsigned int minWidth;
     static QString login, passwd, lang;
+    static QString dbFileName;
     static bool camUsing;
 private:
     SedstatsSettings(){}
     SedstatsSettings(const SedstatsSettings& root);
     SedstatsSettings& operator=(const SedstatsSettings&);
-
 };
 
 

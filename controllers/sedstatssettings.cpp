@@ -7,13 +7,11 @@ unsigned int SedstatsSettings::maxWorkingPeriod;
 QString SedstatsSettings::passwd;
 QString SedstatsSettings::login;
 QString SedstatsSettings::lang;
+QString SedstatsSettings::dbFileName;
 bool SedstatsSettings::camUsing;
 
 void
 SedstatsSettings::writeSettings()const{
-    qDebug() << "Write values";
-    qDebug() << "minWidth" << minWidth;
-    qDebug() << "maxWidth" << maxWidth;
     QSettings settings;
     settings.setValue("minWidth", minWidth);
     settings.setValue("maxWidth", maxWidth);
@@ -22,11 +20,11 @@ SedstatsSettings::writeSettings()const{
     settings.setValue("Password", passwd);
     settings.setValue("CameraOn", camUsing);
     settings.setValue("Language", lang);
+    settings.setValue("DBFileName", dbFileName);
 }
 
 void SedstatsSettings::readSettings()const{
     QSettings settings;
-
     minWidth = settings.value("minWidth", 20).toInt();
     maxWidth = settings.value("maxWidth", 50).toInt();
     maxWorkingPeriod = settings.value("maxWorkingPeriod", 1).toInt();
@@ -34,10 +32,7 @@ void SedstatsSettings::readSettings()const{
     passwd = settings.value("Password", "").toString();
     lang = settings.value("Language", "").toString();
     camUsing = settings.value("CameraOn", false).toBool();
-    qDebug() << "Read values";
-    qDebug() << "minWidth" << minWidth;
-    qDebug() << "maxWidth" << maxWidth;
-
+    dbFileName = settings.value("DBFileName", "").toString();
 }
 
 
