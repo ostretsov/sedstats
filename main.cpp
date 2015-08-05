@@ -21,6 +21,7 @@ int main(int argc, char *argv[])
     ctrl.createConnections();
     ctrl.readSettings();
     ctrl.initLanguagesMap();
+    ctrl.createDB();
     ctrl.startTimers();
 
     ctrl.start();

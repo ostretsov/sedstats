@@ -37,6 +37,7 @@ public:
 
     void readSettings();
     void writeSetings();
+    void createDB();
 signals:
     void quit();
     void sysIdleRequest();

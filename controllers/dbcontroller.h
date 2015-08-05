@@ -14,6 +14,10 @@ signals:
 public slots:
     void storeData(uint start, uint maxduration, uint duration);
 private:
+    QString p_tableName;
+    QString p_createTableQuery;
+    QString p_checkTableQuery;
+    QString p_storeQuery;
 };
 
 #endif // DBCONTROLLER_H

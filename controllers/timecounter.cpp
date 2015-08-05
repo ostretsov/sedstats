@@ -51,10 +51,12 @@ TimeCounter::m_count(){
         case free:
             m_currentFreeTime++;
             if (m_currentFreeTime >= AWAY_TIME){// минута прошла
+                //переслать данные об активном периоде
+                qDebug() << "Sending active period data from red"<< m_timeStamp << m_currentTime << m_maxWorkingTime;
+                emit currentPeriodFinished(m_timeStamp, m_maxWorkingTime, m_currentTime);
+                //обнулиться
                 m_currentFreeTime = 0;
                 m_timeStamp = QDateTime::currentDateTime().toTime_t();
-                //переслать данные об активном периоде
-                qDebug() << "Sending active period data "<< m_timeStamp << m_currentTime << m_maxWorkingTime;
                 m_currentTime = 0;
                 //перейти в состояние серый
                 m_machineState = gray;
@@ -97,10 +99,11 @@ TimeCounter::m_count(){
         case free:
             m_currentFreeTime++;
             if (m_currentFreeTime >= AWAY_TIME){// минута прошла
-                m_currentFreeTime = 0;
                 //переслать данные об активном периоде
-                qDebug() << "Sending active period data " << m_timeStamp << m_currentTime << m_maxWorkingTime;
-                //
+                qDebug() << "Sending active period data from green"<< m_timeStamp << m_currentTime << m_maxWorkingTime;
+                emit currentPeriodFinished(m_timeStamp, m_maxWorkingTime, m_currentTime);
+
+                m_currentFreeTime = 0;
                 //перейти в состояние серый
                 m_machineState = gray;
                 emit stateChanged(Color::gray);

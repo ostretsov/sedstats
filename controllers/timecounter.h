@@ -9,10 +9,10 @@ class QTimer;
 class TimeCounter : public QObject
 {
     Q_OBJECT
-enum UserState {busy, free};
-enum MachineState {red, green, gray};
-static const int MAX_WORKING_TIME = 60;
-static const int AWAY_TIME  = 60;
+    enum UserState {busy, free};
+    enum MachineState {red, green, gray};
+    static const int MAX_WORKING_TIME = 60;
+    static const int AWAY_TIME  = 60;
 public:
     explicit TimeCounter(QObject *parent = 0);
 
@@ -21,6 +21,7 @@ public:
 signals:
     void stateChanged(Color color);
     void setCurrentWorkingTime(int time);
+    void currentPeriodFinished(uint timestamp, uint maxtime, uint workingtime);
 
 public slots:
     void userStateBusy(bool state);

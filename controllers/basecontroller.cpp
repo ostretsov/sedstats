@@ -53,9 +53,6 @@ BaseController::BaseController(QApplication *parent) :
 
 void
 BaseController::start(){
-    if(!m_dbController->checkDB()){
-        m_dbController->createDB();
-    }
     m_trayIcon->show();
     m_timeCounter->startTimers();
 }
@@ -63,6 +60,13 @@ BaseController::start(){
 BaseController::~BaseController(){
     delete m_statisticTimes;
     delete m_setupView;
+}
+
+void
+BaseController::createDB(){
+    if(!m_dbController->checkDB()){
+        m_dbController->createDB();
+    }
 }
 
 void
@@ -128,6 +132,9 @@ BaseController::createConnections(){
     //соединить для смены языка
     connect(this, SIGNAL(changeLanguage()),
             m_trayIcon, SLOT(changeLanguage()));
+    //записать данные о прошедшем активном периоде в БД
+    QObject::connect(m_timeCounter, &TimeCounter::currentPeriodFinished,
+            m_dbController, &DBController::storeData);
 }
 
 void

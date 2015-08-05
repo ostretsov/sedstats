@@ -34,8 +34,6 @@ CameraController::CameraController(QObject *parent) :
 bool
 CameraController::m_cameraInit(){
     cv::VideoCapture capture(0);//взять дефолтную камеру
-    //может вставить в форму setup выбор камеры?
-    //вдруг там не одна?
     bool cam = capture.isOpened();
     capture.release();
     return cam;
